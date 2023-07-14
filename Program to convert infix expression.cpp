@@ -1,6 +1,5 @@
-//Program to convert infix expression into prefix
+//Program to convert infix expression into postfix
 #include <iostream>
-#include<string.h>
 #define SIZE 20
 using namespace std;
 
@@ -62,60 +61,51 @@ int isOperator(char ch)
     else
         return 0;
 }
-
 int main()
 {
-    char infix[20], prefix[20];
-    cout<<"-------------Infix to Prefix-----------------";
+    char infix[20], postfix[20];
+    cout<<"-------------Infix to Postfix-----------------";
     Stack st;
     cout<<"Enter the infix expression : ";
     cin>>infix;
-    int i=0, j=0;
-    //Reverse a string
-    strcpy(infix,strrev(infix));
+    int j=0;
    
-    cout<<"Infix : "<<infix;
-    j=0;
     for(int i=0;infix[i]!='\0';i++)
     {
         char symbol = infix[i];
         if (isalpha(symbol) || isdigit(symbol))
-            prefix[j++]=symbol;
-        else if (symbol==')')
-            st.push(symbol);
+            postfix[j++]=symbol;
         else if (symbol=='(')
+            st.push(symbol);
+        else if (symbol==')')
         {
-            while(st.peek()!=')' )
-                prefix[j++]=st.pop();
+            while(st.peek()!='(' )
+                postfix[j++]=st.pop();
             st.pop();
         }
         else if (isOperator(symbol)==1)
         {
             if (st.isEmpty()==1)
                 st.push(symbol);
-            else if (st.peek()==')')
+            else if (st.peek()=='(')
                 st.push(symbol);
-            else if (getPrecedence(symbol)<getPrecedence(st.peek()))
+            else if (getPrecedence(symbol)>=getPrecedence(st.peek()))
                 st.push(symbol);
             else
             {
-                while(getPrecedence(symbol)>=getPrecedence(st.peek()) && st.isEmpty()!=1)
+                while(getPrecedence(symbol)<getPrecedence(st.peek()) && st.isEmpty()!=1)
                 {
-                    prefix[j++]=st.pop();
+                    postfix[j++]=st.pop();
                 }
                 st.push(symbol);
             }            
         }
-        
     }
     while(st.isEmpty()!=1)
     {
-        prefix[j++]=st.pop();
+        postfix[j++]=st.pop();
     }
-    prefix[j]='\0';
-
-
-   strcpy(prefix,strrev(prefix));
-    cout<<"\nPrefix Expression is : "<<prefix;
+    postfix[j]='\0';
+    cout<<"\nPostfix Expression is : "<<postfix;
     return 0;
 }
